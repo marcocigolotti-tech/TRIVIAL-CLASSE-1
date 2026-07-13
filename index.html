@@ -50,15 +50,34 @@
         .btn-opzione:hover {
             background-color: #2980b9;
         }
+        .btn-opzione:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
         #feedback {
             margin-top: 20px;
             font-weight: bold;
             padding: 15px;
             border-radius: 8px;
-            display: none; /* Nascosto all'inizio */
+            display: none;
         }
         .corretto { background-color: #d4edda; color: #155724; }
         .errato { background-color: #f8d7da; color: #721c24; }
+        
+        #btn-avanti {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            display: none; /* Nascosto finché non si risponde */
+        }
+        #btn-avanti:hover {
+            background-color: #27ae60;
+        }
     </style>
 </head>
 <body>
@@ -67,68 +86,97 @@
         <h2 id="argomento-titolo">Argomento</h2>
         <h3 id="testo-domanda">Caricamento domanda...</h3>
         
-        <div id="pulsanti-opzioni">
-            </div>
+        <div id="pulsanti-opzioni"></div>
 
         <div id="feedback"></div>
+        
+        <button id="btn-avanti" onclick="pescaDomandaCasuale()">Prossima Domanda ➔</button>
     </div>
 
     <script>
-        // 1. Il nostro database
         const databaseDomande = [
           {
-            classe: "Prima",
-            argomento: "Arte Romana",
-            colore: "rosso",
-            domanda: "Quale tecnica veniva usata dai Romani per decorare in modo permanente le pareti delle loro domus, dipingendo direttamente sull'intonaco ancora bagnato?",
-            opzioni: [
-              "Pittura a olio", 
-              "Mosaico", 
-              "Affresco", 
-              "Tempera all'uovo"
-            ],
+            classe: "Prima", argomento: "Preistoria", colore: "marrone",
+            domanda: "Qual era la funzione principale delle pitture rupestri realizzate all'interno delle caverne?",
+            opzioni: ["Decorare l'ambiente", "Scopi magico-propiziatori per la caccia", "Insegnare a scrivere", "Registrare i cambiamenti climatici"],
+            rispostaCorretta: 1,
+            spiegazione: "Gli uomini preistorici dipingevano gli animali sulla roccia sperando di 'catturarne' l'essenza e garantirsi una battuta di caccia fortunata."
+          },
+          {
+            classe: "Prima", argomento: "Arte della Mesopotamia", colore: "giallo",
+            domanda: "Come si chiama la grande torre a gradoni tipica delle città sumere e babilonesi?",
+            opzioni: ["Piramide", "Nuraghe", "Ziggurat", "Partenone"],
+            rispostaCorretta: 2,
+            spiegazione: "La Ziggurat era il centro religioso e magazzino della città; sulla sua sommità si trovava il tempio."
+          },
+          {
+            classe: "Prima", argomento: "Arte Egizia", colore: "verde",
+            domanda: "Nella pittura egizia, come venivano rappresentate le figure umane?",
+            opzioni: ["Totalmente di profilo", "Totalmente di fronte", "Con volto e gambe di profilo, ma occhio e busto di fronte", "In prospettiva tridimensionale"],
+            rispostaCorretta: 2,
+            spiegazione: "Questa tecnica è chiamata 'legge della frontalità' ed era usata per rendere le figure immediatamente riconoscibili ed eterne."
+          },
+          {
+            classe: "Prima", argomento: "Arte Cretese e Micenea", colore: "blu",
+            domanda: "Quale famoso palazzo si trovava sull'isola di Creta?",
+            opzioni: ["Palazzo di Cnosso", "Palazzo di Micene", "Palazzo di Troia", "Colosseo"],
+            rispostaCorretta: 0,
+            spiegazione: "Il Palazzo di Cnosso era così grande e intricato da aver ispirato il mito del Labirinto del Minotauro."
+          },
+          {
+            classe: "Prima", argomento: "Arte Greca", colore: "arancione",
+            domanda: "Quali sono i tre principali ordini architettonici dei templi greci?",
+            opzioni: ["Romano, Gotico e Rinascimentale", "Dorico, Ionico e Corinzio", "Liscio, Scanalato e Decorato", "Archaico, Classico ed Ellenistico"],
+            rispostaCorretta: 1,
+            spiegazione: "Il Dorico è semplice, lo Ionico ha le volute e il Corinzio ha le foglie d'acanto."
+          },
+          {
+            classe: "Prima", argomento: "Arte Romana", colore: "rosso",
+            domanda: "Quale tecnica veniva usata dai Romani per decorare in modo permanente le pareti dipingendo sull'intonaco bagnato?",
+            opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"],
             rispostaCorretta: 2,
             spiegazione: "L'affresco permette al colore di penetrare nell'intonaco mentre asciuga, diventando estremamente resistente nel tempo."
           }
-          // Nota: per ora ne ho lasciata solo una per fare un test veloce. 
-          // Potrai incollare le altre qui sotto in seguito!
         ];
 
-        // 2. Selezioniamo gli elementi dell'HTML
         const titoloArgomento = document.getElementById("argomento-titolo");
         const testoDomanda = document.getElementById("testo-domanda");
         const contenitorePulsanti = document.getElementById("pulsanti-opzioni");
         const areaFeedback = document.getElementById("feedback");
+        const btnAvanti = document.getElementById("btn-avanti");
 
-        // 3. Funzione per mostrare la domanda
-        function mostraDomanda(indice) {
-            const domandaAttuale = databaseDomande[indice];
+        let domandaAttuale;
+
+        function pescaDomandaCasuale() {
+            // Sceglie un numero a caso tra 0 e la lunghezza del database
+            const indiceCasuale = Math.floor(Math.random() * databaseDomande.length);
+            domandaAttuale = databaseDomande[indiceCasuale];
             
-            // Inseriamo i testi
             titoloArgomento.innerText = "Categoria: " + domandaAttuale.argomento;
             testoDomanda.innerText = domandaAttuale.domanda;
             
-            // Svuotiamo il contenitore dei pulsanti
+            // Reset dell'interfaccia
             contenitorePulsanti.innerHTML = "";
             areaFeedback.style.display = "none";
+            btnAvanti.style.display = "none"; // Nasconde il tasto avanti all'inizio
 
-            // Creiamo un pulsante per ogni opzione
             domandaAttuale.opzioni.forEach((opzione, index) => {
                 const bottone = document.createElement("button");
                 bottone.innerText = opzione;
                 bottone.classList.add("btn-opzione");
-                
-                // Aggiungiamo l'azione al click
                 bottone.onclick = () => verificaRisposta(index, domandaAttuale.rispostaCorretta, domandaAttuale.spiegazione);
-                
                 contenitorePulsanti.appendChild(bottone);
             });
         }
 
-        // 4. Funzione per verificare la risposta
         function verificaRisposta(indiceScelto, indiceCorretto, spiegazione) {
             areaFeedback.style.display = "block";
+            btnAvanti.style.display = "inline-block"; // Mostra il tasto per andare avanti
             
+            // Disabilita i pulsanti per impedire di cliccare ancora
+            const tuttiIPulsanti = document.querySelectorAll(".btn-opzione");
+            tuttiIPulsanti.forEach(btn => btn.disabled = true);
+
             if (indiceScelto === indiceCorretto) {
                 areaFeedback.innerText = "Esatto! 🎉\n" + spiegazione;
                 areaFeedback.className = "corretto";
@@ -138,9 +186,10 @@
             }
         }
 
-        // 5. Facciamo partire il gioco mostrando la prima domanda (indice 0)
-        mostraDomanda(0);
+        // Fa partire il gioco estraendo la prima domanda casuale
+        pescaDomandaCasuale();
 
     </script>
 </body>
+</html>
 </html>
