@@ -12,20 +12,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .container {
             background: white;
-            padding: 40px 30px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             max-width: 600px;
-            width: 90%;
+            width: 100%;
             text-align: center;
         }
         
-        /* Stili per la Schermata Iniziale */
+        /* SCHERMATA INIZIALE */
         #schermata-iniziale h1 {
             color: #2c3e50;
             font-size: 1.8em;
@@ -39,6 +41,16 @@
             margin-bottom: 30px;
             font-weight: normal;
         }
+        .selettore-squadre {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+        .selettore-squadre select {
+            font-size: 1em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
         .btn-inizia {
             background-color: #e74c3c;
             color: white;
@@ -51,24 +63,53 @@
             transition: background 0.3s;
             margin-top: 20px;
         }
-        .btn-inizia:hover {
-            background-color: #c0392b;
+        .btn-inizia:hover { background-color: #c0392b; }
+
+        /* TABELLONE PUNTEGGI */
+        #tabellone {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #bdc3c7;
+        }
+        .squadra-score {
+            background-color: #ecf0f1;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .squadra-attiva {
+            background-color: #f1c40f; /* Colore giallo per evidenziare il turno */
+            color: #000;
+            box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
         }
 
-        /* Stili per il Quiz (nascosto all'inizio) */
-        #quiz-container {
-            display: none; 
+        /* GIOCO */
+        #quiz-container { display: none; }
+        #indicatore-turno {
+            font-size: 1.3em;
+            color: #e67e22;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
-        #quiz-container h2 {
+        #argomento-titolo {
             color: #2c3e50;
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-        #quiz-container h3 {
             font-size: 1.1em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #testo-domanda {
+            font-size: 1.2em;
             margin-bottom: 20px;
             font-weight: normal;
         }
+        
+        /* PULSANTI E FEEDBACK */
         .btn-opzione {
             display: block;
             width: 100%;
@@ -82,12 +123,11 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        .btn-opzione:hover {
-            background-color: #2980b9;
-        }
+        .btn-opzione:hover { background-color: #2980b9; }
         .btn-opzione:disabled {
             background-color: #bdc3c7;
             cursor: not-allowed;
+            color: #7f8c8d;
         }
         #feedback {
             margin-top: 20px;
@@ -95,9 +135,10 @@
             padding: 15px;
             border-radius: 8px;
             display: none;
+            white-space: pre-line; /* Permette di andare a capo correttamente */
         }
-        .corretto { background-color: #d4edda; color: #155724; }
-        .errato { background-color: #f8d7da; color: #721c24; }
+        .corretto { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .errato { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         
         #btn-avanti {
             margin-top: 20px;
@@ -106,9 +147,10 @@
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1em;
+            font-size: 1.1em;
             cursor: pointer;
             display: none;
+            font-weight: bold;
         }
         #btn-avanti:hover { background-color: #27ae60; }
     </style>
@@ -119,62 +161,100 @@
         <h1>Prof. Marco Cigolotti</h1>
         <h2>TriviArt - Classe 1</h2>
         
-        <p><em>(Qui in futuro metteremo il selettore per le squadre da 2 a 6)</em></p>
+        <div class="selettore-squadre">
+            <label for="numero-squadre">Numero di squadre:</label>
+            <select id="numero-squadre">
+                <option value="2">2 Squadre</option>
+                <option value="3">3 Squadre</option>
+                <option value="4">4 Squadre</option>
+                <option value="5">5 Squadre</option>
+                <option value="6">6 Squadre</option>
+            </select>
+        </div>
         
         <button class="btn-inizia" onclick="iniziaGioco()">Inizia la Partita</button>
     </div>
 
     <div id="quiz-container" class="container">
+        
+        <div id="tabellone"></div>
+        
+        <div id="indicatore-turno">Tocca alla Squadra X</div>
+
         <h2 id="argomento-titolo">Argomento</h2>
         <h3 id="testo-domanda">Caricamento domanda...</h3>
         
         <div id="pulsanti-opzioni"></div>
         <div id="feedback"></div>
         
-        <button id="btn-avanti" onclick="pescaDomandaCasuale()">Prossima Domanda ➔</button>
+        <button id="btn-avanti" onclick="prossimoTurno()">Prossima Domanda ➔</button>
     </div>
 
     <script>
-        // IL DATABASE (da espandere a 15 domande per argomento)
+        // IL DATABASE (Esempi ridotti, pronti per essere espansi)
         const databaseDomande = [
-          // PREISTORIA
           { argomento: "Preistoria", colore: "marrone", domanda: "Qual era la funzione principale delle pitture rupestri realizzate all'interno delle caverne?", opzioni: ["Decorare l'ambiente", "Scopi magico-propiziatori per la caccia", "Insegnare a scrivere", "Registrare i cambiamenti climatici"], rispostaCorretta: 1, spiegazione: "Gli uomini preistorici dipingevano gli animali sperando di 'catturarne' l'essenza per la caccia." },
           { argomento: "Preistoria", colore: "marrone", domanda: "Quali pigmenti naturali venivano usati principalmente nella preistoria?", opzioni: ["Acrilici e tempere", "Terre, ocre e carbone", "Colori a olio", "Smalto sintetico"], rispostaCorretta: 1, spiegazione: "Utilizzavano minerali tritati (come l'ocra rossa e gialla) e carbone, mescolati con grasso animale o acqua." },
-          
-          // MESOPOTAMIA
           { argomento: "Mesopotamia", colore: "giallo", domanda: "Come si chiama la grande torre a gradoni tipica delle città sumere e babilonesi?", opzioni: ["Piramide", "Nuraghe", "Ziggurat", "Partenone"], rispostaCorretta: 2, spiegazione: "La Ziggurat era il centro religioso e magazzino della città; sulla sua sommità si trovava il tempio." },
-          
-          // EGITTO
           { argomento: "Arte Egizia", colore: "verde", domanda: "Nella pittura egizia, come venivano rappresentate le figure umane secondo la 'legge della frontalità'?", opzioni: ["Totalmente di profilo", "Totalmente di fronte", "Volto/gambe di profilo, ma occhio/busto di fronte", "In prospettiva tridimensionale"], rispostaCorretta: 2, spiegazione: "Questa tecnica serviva a mostrare ogni parte del corpo dal suo angolo più riconoscibile." },
-          
-          // CRETA E MICENE
           { argomento: "Cretese e Micenea", colore: "blu", domanda: "Nel famoso 'Gioco del Toro' affrescato a Cnosso, cosa indicano i diversi colori della pelle delle figure umane?", opzioni: ["L'età", "La provenienza geografica", "Il genere (uomini scuri, donne chiare)", "Il grado di nobiltà"], rispostaCorretta: 2, spiegazione: "È una convenzione artistica molto antica: la pelle bianca per le donne e rossastra/bruna per gli uomini." },
-          
-          // GRECIA
           { argomento: "Arte Greca", colore: "arancione", domanda: "Quali sono i tre principali ordini architettonici dei templi greci?", opzioni: ["Romano, Gotico e Rinascimentale", "Dorico, Ionico e Corinzio", "Liscio, Scanalato e Decorato", "Archaico, Classico ed Ellenistico"], rispostaCorretta: 1, spiegazione: "Il Dorico è semplice e massiccio, lo Ionico ha le volute e il Corinzio le foglie d'acanto." },
-          
-          // ROMA
           { argomento: "Arte Romana", colore: "rosso", domanda: "Quale tecnica usavano i Romani per decorare le pareti in modo duraturo, dipingendo sull'intonaco fresco?", opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"], rispostaCorretta: 2, spiegazione: "Con l'affresco, asciugandosi, l'intonaco ingloba il pigmento facendolo diventare parte del muro stesso." }
         ];
 
-        // LOGICA DI GIOCO
+        // VARIABILI DI GIOCO
+        let squadre = [];
+        let turnoAttuale = 0;
+        let domandaAttuale;
+
+        // ELEMENTI DEL DOM
         const schermataIniziale = document.getElementById("schermata-iniziale");
         const quizContainer = document.getElementById("quiz-container");
+        const tabellone = document.getElementById("tabellone");
+        const indicatoreTurno = document.getElementById("indicatore-turno");
         const titoloArgomento = document.getElementById("argomento-titolo");
         const testoDomanda = document.getElementById("testo-domanda");
         const contenitorePulsanti = document.getElementById("pulsanti-opzioni");
         const areaFeedback = document.getElementById("feedback");
         const btnAvanti = document.getElementById("btn-avanti");
 
-        let domandaAttuale;
-
-        // Funzione per passare dalla schermata iniziale al gioco
+        // 1. INIZIALIZZAZIONE DELLE SQUADRE
         function iniziaGioco() {
+            const numeroSelezionato = parseInt(document.getElementById("numero-squadre").value);
+            
+            // Creiamo l'array delle squadre con punteggio a zero
+            squadre = [];
+            for (let i = 1; i <= numeroSelezionato; i++) {
+                squadre.push({ nome: "Squadra " + i, punteggio: 0 });
+            }
+            
+            turnoAttuale = 0;
             schermataIniziale.style.display = "none";
             quizContainer.style.display = "block";
+            
+            aggiornaInterfaccia();
             pescaDomandaCasuale();
         }
 
+        // 2. AGGIORNAMENTO DEL TABELLONE E DEL TURNO
+        function aggiornaInterfaccia() {
+            // Svuota e ricrea i punteggi in alto
+            tabellone.innerHTML = "";
+            squadre.forEach((squadra, index) => {
+                const badge = document.createElement("div");
+                badge.className = "squadra-score";
+                if (index === turnoAttuale) {
+                    badge.classList.add("squadra-attiva"); // Evidenzia chi deve giocare
+                }
+                badge.innerText = `${squadra.nome}: ${squadra.punteggio}`;
+                tabellone.appendChild(badge);
+            });
+
+            // Scritta grande per indicare il turno
+            indicatoreTurno.innerText = "Tocca alla " + squadre[turnoAttuale].nome;
+        }
+
+        // 3. ESTRAZIONE DELLA DOMANDA
         function pescaDomandaCasuale() {
             const indiceCasuale = Math.floor(Math.random() * databaseDomande.length);
             domandaAttuale = databaseDomande[indiceCasuale];
@@ -195,20 +275,35 @@
             });
         }
 
+        // 4. VERIFICA E ASSEGNAZIONE PUNTI
         function verificaRisposta(indiceScelto, indiceCorretto, spiegazione) {
             areaFeedback.style.display = "block";
             btnAvanti.style.display = "inline-block"; 
             
+            // Blocca i pulsanti
             const tuttiIPulsanti = document.querySelectorAll(".btn-opzione");
             tuttiIPulsanti.forEach(btn => btn.disabled = true);
 
             if (indiceScelto === indiceCorretto) {
-                areaFeedback.innerText = "Esatto! 🎉\n" + spiegazione;
+                areaFeedback.innerText = "Esatto! 🎉\n\n" + spiegazione;
                 areaFeedback.className = "corretto";
+                
+                // Aggiunge un punto alla squadra di turno
+                squadre[turnoAttuale].punteggio++;
+                aggiornaInterfaccia(); // Aggiorna subito il numero a schermo
             } else {
-                areaFeedback.innerText = "Sbagliato! 😔\n" + spiegazione;
+                areaFeedback.innerText = "Sbagliato! 😔\n\n" + spiegazione;
                 areaFeedback.className = "errato";
             }
+        }
+
+        // 5. PASSAGGIO AL TURNO SUCCESSIVO
+        function prossimoTurno() {
+            // Aumenta il turno. Se supera il numero di squadre, riparte da zero.
+            turnoAttuale = (turnoAttuale + 1) % squadre.length;
+            
+            aggiornaInterfaccia();
+            pescaDomandaCasuale();
         }
     </script>
 </body>
