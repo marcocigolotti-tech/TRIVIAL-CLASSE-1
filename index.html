@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz di Arte - Classe Prima</title>
+    <title>TriviArt - Classe Prima</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f4f9;
             color: #333;
             display: flex;
@@ -15,21 +15,56 @@
             height: 100vh;
             margin: 0;
         }
-        #quiz-container {
+        .container {
             background: white;
-            padding: 30px;
+            padding: 40px 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            max-width: 500px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
             width: 90%;
             text-align: center;
         }
-        h2 {
+        
+        /* Stili per la Schermata Iniziale */
+        #schermata-iniziale h1 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        #schermata-iniziale h2 {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+        .btn-inizia {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        .btn-inizia:hover {
+            background-color: #c0392b;
+        }
+
+        /* Stili per il Quiz (nascosto all'inizio) */
+        #quiz-container {
+            display: none; 
+        }
+        #quiz-container h2 {
             color: #2c3e50;
             font-size: 1.2em;
             margin-bottom: 5px;
         }
-        h3 {
+        #quiz-container h3 {
             font-size: 1.1em;
             margin-bottom: 20px;
             font-weight: normal;
@@ -73,72 +108,58 @@
             border-radius: 8px;
             font-size: 1em;
             cursor: pointer;
-            display: none; /* Nascosto finché non si risponde */
+            display: none;
         }
-        #btn-avanti:hover {
-            background-color: #27ae60;
-        }
+        #btn-avanti:hover { background-color: #27ae60; }
     </style>
 </head>
 <body>
 
-    <div id="quiz-container">
+    <div id="schermata-iniziale" class="container">
+        <h1>Prof. Marco Cigolotti</h1>
+        <h2>TriviArt - Classe 1</h2>
+        
+        <p><em>(Qui in futuro metteremo il selettore per le squadre da 2 a 6)</em></p>
+        
+        <button class="btn-inizia" onclick="iniziaGioco()">Inizia la Partita</button>
+    </div>
+
+    <div id="quiz-container" class="container">
         <h2 id="argomento-titolo">Argomento</h2>
         <h3 id="testo-domanda">Caricamento domanda...</h3>
         
         <div id="pulsanti-opzioni"></div>
-
         <div id="feedback"></div>
         
         <button id="btn-avanti" onclick="pescaDomandaCasuale()">Prossima Domanda ➔</button>
     </div>
 
     <script>
+        // IL DATABASE (da espandere a 15 domande per argomento)
         const databaseDomande = [
-          {
-            classe: "Prima", argomento: "Preistoria", colore: "marrone",
-            domanda: "Qual era la funzione principale delle pitture rupestri realizzate all'interno delle caverne?",
-            opzioni: ["Decorare l'ambiente", "Scopi magico-propiziatori per la caccia", "Insegnare a scrivere", "Registrare i cambiamenti climatici"],
-            rispostaCorretta: 1,
-            spiegazione: "Gli uomini preistorici dipingevano gli animali sulla roccia sperando di 'catturarne' l'essenza e garantirsi una battuta di caccia fortunata."
-          },
-          {
-            classe: "Prima", argomento: "Arte della Mesopotamia", colore: "giallo",
-            domanda: "Come si chiama la grande torre a gradoni tipica delle città sumere e babilonesi?",
-            opzioni: ["Piramide", "Nuraghe", "Ziggurat", "Partenone"],
-            rispostaCorretta: 2,
-            spiegazione: "La Ziggurat era il centro religioso e magazzino della città; sulla sua sommità si trovava il tempio."
-          },
-          {
-            classe: "Prima", argomento: "Arte Egizia", colore: "verde",
-            domanda: "Nella pittura egizia, come venivano rappresentate le figure umane?",
-            opzioni: ["Totalmente di profilo", "Totalmente di fronte", "Con volto e gambe di profilo, ma occhio e busto di fronte", "In prospettiva tridimensionale"],
-            rispostaCorretta: 2,
-            spiegazione: "Questa tecnica è chiamata 'legge della frontalità' ed era usata per rendere le figure immediatamente riconoscibili ed eterne."
-          },
-          {
-            classe: "Prima", argomento: "Arte Cretese e Micenea", colore: "blu",
-            domanda: "Quale famoso palazzo si trovava sull'isola di Creta?",
-            opzioni: ["Palazzo di Cnosso", "Palazzo di Micene", "Palazzo di Troia", "Colosseo"],
-            rispostaCorretta: 0,
-            spiegazione: "Il Palazzo di Cnosso era così grande e intricato da aver ispirato il mito del Labirinto del Minotauro."
-          },
-          {
-            classe: "Prima", argomento: "Arte Greca", colore: "arancione",
-            domanda: "Quali sono i tre principali ordini architettonici dei templi greci?",
-            opzioni: ["Romano, Gotico e Rinascimentale", "Dorico, Ionico e Corinzio", "Liscio, Scanalato e Decorato", "Archaico, Classico ed Ellenistico"],
-            rispostaCorretta: 1,
-            spiegazione: "Il Dorico è semplice, lo Ionico ha le volute e il Corinzio ha le foglie d'acanto."
-          },
-          {
-            classe: "Prima", argomento: "Arte Romana", colore: "rosso",
-            domanda: "Quale tecnica veniva usata dai Romani per decorare in modo permanente le pareti dipingendo sull'intonaco bagnato?",
-            opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"],
-            rispostaCorretta: 2,
-            spiegazione: "L'affresco permette al colore di penetrare nell'intonaco mentre asciuga, diventando estremamente resistente nel tempo."
-          }
+          // PREISTORIA
+          { argomento: "Preistoria", colore: "marrone", domanda: "Qual era la funzione principale delle pitture rupestri realizzate all'interno delle caverne?", opzioni: ["Decorare l'ambiente", "Scopi magico-propiziatori per la caccia", "Insegnare a scrivere", "Registrare i cambiamenti climatici"], rispostaCorretta: 1, spiegazione: "Gli uomini preistorici dipingevano gli animali sperando di 'catturarne' l'essenza per la caccia." },
+          { argomento: "Preistoria", colore: "marrone", domanda: "Quali pigmenti naturali venivano usati principalmente nella preistoria?", opzioni: ["Acrilici e tempere", "Terre, ocre e carbone", "Colori a olio", "Smalto sintetico"], rispostaCorretta: 1, spiegazione: "Utilizzavano minerali tritati (come l'ocra rossa e gialla) e carbone, mescolati con grasso animale o acqua." },
+          
+          // MESOPOTAMIA
+          { argomento: "Mesopotamia", colore: "giallo", domanda: "Come si chiama la grande torre a gradoni tipica delle città sumere e babilonesi?", opzioni: ["Piramide", "Nuraghe", "Ziggurat", "Partenone"], rispostaCorretta: 2, spiegazione: "La Ziggurat era il centro religioso e magazzino della città; sulla sua sommità si trovava il tempio." },
+          
+          // EGITTO
+          { argomento: "Arte Egizia", colore: "verde", domanda: "Nella pittura egizia, come venivano rappresentate le figure umane secondo la 'legge della frontalità'?", opzioni: ["Totalmente di profilo", "Totalmente di fronte", "Volto/gambe di profilo, ma occhio/busto di fronte", "In prospettiva tridimensionale"], rispostaCorretta: 2, spiegazione: "Questa tecnica serviva a mostrare ogni parte del corpo dal suo angolo più riconoscibile." },
+          
+          // CRETA E MICENE
+          { argomento: "Cretese e Micenea", colore: "blu", domanda: "Nel famoso 'Gioco del Toro' affrescato a Cnosso, cosa indicano i diversi colori della pelle delle figure umane?", opzioni: ["L'età", "La provenienza geografica", "Il genere (uomini scuri, donne chiare)", "Il grado di nobiltà"], rispostaCorretta: 2, spiegazione: "È una convenzione artistica molto antica: la pelle bianca per le donne e rossastra/bruna per gli uomini." },
+          
+          // GRECIA
+          { argomento: "Arte Greca", colore: "arancione", domanda: "Quali sono i tre principali ordini architettonici dei templi greci?", opzioni: ["Romano, Gotico e Rinascimentale", "Dorico, Ionico e Corinzio", "Liscio, Scanalato e Decorato", "Archaico, Classico ed Ellenistico"], rispostaCorretta: 1, spiegazione: "Il Dorico è semplice e massiccio, lo Ionico ha le volute e il Corinzio le foglie d'acanto." },
+          
+          // ROMA
+          { argomento: "Arte Romana", colore: "rosso", domanda: "Quale tecnica usavano i Romani per decorare le pareti in modo duraturo, dipingendo sull'intonaco fresco?", opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"], rispostaCorretta: 2, spiegazione: "Con l'affresco, asciugandosi, l'intonaco ingloba il pigmento facendolo diventare parte del muro stesso." }
         ];
 
+        // LOGICA DI GIOCO
+        const schermataIniziale = document.getElementById("schermata-iniziale");
+        const quizContainer = document.getElementById("quiz-container");
         const titoloArgomento = document.getElementById("argomento-titolo");
         const testoDomanda = document.getElementById("testo-domanda");
         const contenitorePulsanti = document.getElementById("pulsanti-opzioni");
@@ -147,18 +168,23 @@
 
         let domandaAttuale;
 
+        // Funzione per passare dalla schermata iniziale al gioco
+        function iniziaGioco() {
+            schermataIniziale.style.display = "none";
+            quizContainer.style.display = "block";
+            pescaDomandaCasuale();
+        }
+
         function pescaDomandaCasuale() {
-            // Sceglie un numero a caso tra 0 e la lunghezza del database
             const indiceCasuale = Math.floor(Math.random() * databaseDomande.length);
             domandaAttuale = databaseDomande[indiceCasuale];
             
             titoloArgomento.innerText = "Categoria: " + domandaAttuale.argomento;
             testoDomanda.innerText = domandaAttuale.domanda;
             
-            // Reset dell'interfaccia
             contenitorePulsanti.innerHTML = "";
             areaFeedback.style.display = "none";
-            btnAvanti.style.display = "none"; // Nasconde il tasto avanti all'inizio
+            btnAvanti.style.display = "none"; 
 
             domandaAttuale.opzioni.forEach((opzione, index) => {
                 const bottone = document.createElement("button");
@@ -171,9 +197,8 @@
 
         function verificaRisposta(indiceScelto, indiceCorretto, spiegazione) {
             areaFeedback.style.display = "block";
-            btnAvanti.style.display = "inline-block"; // Mostra il tasto per andare avanti
+            btnAvanti.style.display = "inline-block"; 
             
-            // Disabilita i pulsanti per impedire di cliccare ancora
             const tuttiIPulsanti = document.querySelectorAll(".btn-opzione");
             tuttiIPulsanti.forEach(btn => btn.disabled = true);
 
@@ -185,11 +210,6 @@
                 areaFeedback.className = "errato";
             }
         }
-
-        // Fa partire il gioco estraendo la prima domanda casuale
-        pescaDomandaCasuale();
-
     </script>
 </body>
-</html>
 </html>
