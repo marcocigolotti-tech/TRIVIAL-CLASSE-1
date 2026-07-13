@@ -3,435 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TriviArt - Classe Prima</title>
+    <title>Triviart - Il Gioco dell'Arte</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --background-color: #f5f7fa;
+            --text-color: #2c3e50;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background-color: var(--background-color);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
-            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
+
         .container {
+            width: 100%;
+            max-width: 600px;
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 600px;
-            width: 100%;
             text-align: center;
-            position: relative;
-            overflow: hidden; 
+            box-sizing: border-box;
         }
-        
-        /* SCHERMATA INIZIALE E FINALE */
-        #schermata-iniziale h1, #schermata-finale h1 {
-            color: #2c3e50;
-            font-size: 1.8em;
-            margin-bottom: 5px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        #schermata-iniziale h2 {
-            color: #7f8c8d;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            font-weight: normal;
-        }
-        
-        /* LEGENDA ARGOMENTI INIZIALE */
-        .titolo-legenda {
-            font-size: 1em;
-            color: #2c3e50;
+
+        h1 {
+            color: var(--primary-color);
             margin-bottom: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
+            font-size: 2.2rem;
         }
-        .legenda-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        .badge-categoria {
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .bg-marrone { background-color: #8d6e63; }
-        .bg-giallo { background-color: #f1c40f; }
-        .bg-verde { background-color: #2ecc71; }
-        .bg-blu { background-color: #3498db; }
-        .bg-arancione { background-color: #e67e22; }
-        .bg-rosso { background-color: #e74c3c; }
 
-        .selettore-squadre {
+        /* Tabellone Punteggi */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
             margin: 20px 0;
-            font-size: 1.1em;
-        }
-        .selettore-squadre select {
-            font-size: 1em;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        .btn-azione {
-            background-color: #e74c3c;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.3s;
-            margin-top: 10px;
-        }
-        .btn-azione:hover { background-color: #c0392b; }
-
-        /* TABELLONE PUNTEGGI */
-        #tabellone {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px dashed #bdc3c7;
-        }
-        .squadra-score {
-            background-color: #ecf0f1;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        .squadra-attiva {
-            background-color: #f1c40f; 
-            color: #000;
-            box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-        }
-
-        /* TIMER */
-        #timer-container {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #c0392b;
-            margin-bottom: 15px;
-            background-color: #fadbd8;
-            padding: 5px 15px;
+            background: #edf2f7;
+            padding: 15px;
             border-radius: 10px;
-            display: inline-block;
         }
 
-        /* GIOCO */
-        #quiz-container, #schermata-finale { display: none; padding-top: 0; }
-        
-        #indicatore-turno {
-            font-size: 1.1em;
-            color: #7f8c8d;
-            font-weight: bold;
-            margin: 20px 0 10px 0;
-        }
-        
-        #argomento-titolo {
-            font-size: 1.2em;
-            margin: 0 -30px 20px -30px; 
-            padding: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: white;
-            font-weight: bold;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3); 
-            transition: background-color 0.3s;
-        }
-        
-        #testo-domanda {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            font-weight: normal;
-        }
-        
-        /* PULSANTI E FEEDBACK */
-        .btn-opzione {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            border: 2px solid #bdc3c7;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-opzione:hover { 
-            background-color: #e0e6ed; 
-            border-color: #95a5a6;
-        }
-        .btn-opzione:disabled {
-            background-color: #ecf0f1;
-            border-color: #ecf0f1;
-            cursor: not-allowed;
-            color: #95a5a6;
-        }
-        #feedback {
-            margin-top: 20px;
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-            white-space: pre-line; 
-        }
-        .corretto { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .errato { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        
-        #btn-avanti {
-            margin-top: 20px;
+        .team-card {
             padding: 10px 20px;
-            background-color: #2c3e50;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .team-card.active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .team-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .team-score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Timer */
+        .timer-container {
+            font-size: 1.5rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        #timer {
+            color: var(--accent-color);
+            font-size: 2rem;
+            display: inline-block;
+            min-width: 50px;
+        }
+
+        /* Area Domanda */
+        .question-box {
+            font-size: 1.3rem;
+            margin: 25px 0;
+            min-height: 60px;
+            font-weight: 600;
+            padding: 0 10px;
+        }
+
+        /* Bottoni Risposte */
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .btn-answer {
+            background-color: white;
+            border: 2px solid #e2e8f0;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .btn-answer:hover:not(:disabled) {
+            background-color: #f7fafc;
+            border-color: var(--primary-color);
+        }
+
+        .btn-answer:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        /* Schermata di Vittoria */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .win-screen h2 {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .btn-restart {
+            background-color: var(--secondary-color);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 10px;
             cursor: pointer;
-            display: none;
+            margin-top: 20px;
             font-weight: bold;
         }
-        #btn-avanti:hover { background-color: #1a252f; }
 
-        /* SCHERMATA FINALE VITTORIA */
-        .vincitore-annuncio {
-            font-size: 1.5em;
-            color: #27ae60;
-            font-weight: bold;
-            margin: 20px 0;
+        .btn-restart:hover {
+            background-color: #27ae60;
         }
     </style>
 </head>
 <body>
 
-    <div id="schermata-iniziale" class="container">
-        <h1>Prof. Marco Cigolotti</h1>
-        <h2>TriviArt - Classe 1</h2>
-        
-        <div class="titolo-legenda">Il percorso nel tempo:</div>
-        <div class="legenda-container">
-            <div class="badge-categoria bg-marrone">1. Preistoria</div>
-            <div class="badge-categoria bg-giallo">2. Mesopotamia</div>
-            <div class="badge-categoria bg-verde">3. Arte Egizia</div>
-            <div class="badge-categoria bg-blu">4. Creta e Micene</div>
-            <div class="badge-categoria bg-arancione">5. Arte Greca</div>
-            <div class="badge-categoria bg-rosso">6. Arte Romana</div>
+    <div class="container">
+        <div id="game-screen" class="screen active">
+            <h1>Triviart</h1>
+            
+            <div class="scoreboard">
+                <div id="team-0-card" class="team-card active">
+                    <div class="team-name">Squadra Blu</div>
+                    <div id="team-0-score" class="team-score">0</div>
+                </div>
+                <div id="team-1-card" class="team-card">
+                    <div class="team-name">Squadra Rossa</div>
+                    <div id="team-1-score" class="team-score">0</div>
+                </div>
+            </div>
+
+            <div class="timer-container">
+                Tempo rimasto: <span id="timer">60</span>s
+            </div>
+
+            <div id="question" class="question-box">Caricamento domanda...</div>
+
+            <div id="answers" class="answers-grid">
+                </div>
         </div>
-        
-        <div class="selettore-squadre">
-            <label for="numero-squadre">Numero di squadre:</label>
-            <select id="numero-squadre">
-                <option value="2">2 Squadre</option>
-                <option value="3">3 Squadre</option>
-                <option value="4">4 Squadre</option>
-                <option value="5">5 Squadre</option>
-                <option value="6">6 Squadre</option>
-            </select>
+
+        <div id="win-screen" class="screen win-screen">
+            <h2>🏆 Vittoria!</h2>
+            <p id="win-message" style="font-size: 1.4rem;"></p>
+            <button class="btn-restart" onclick="riavviaGioco()">Gioca Ancora</button>
         </div>
-        
-        <button class="btn-azione" onclick="iniziaGioco()">Inizia la Partita</button>
-    </div>
-
-    <div id="quiz-container" class="container">
-        <h2 id="argomento-titolo">Argomento</h2>
-        
-        <div id="tabellone"></div>
-        
-        <div id="timer-container">Tempo rimasto: <span id="countdown">60</span>s</div>
-        
-        <div id="indicatore-turno">Tocca alla Squadra X</div>
-
-        <h3 id="testo-domanda">Caricamento domanda...</h3>
-        
-        <div id="pulsanti-opzioni"></div>
-        <div id="feedback"></div>
-        
-        <button id="btn-avanti" onclick="prossimoTurno()">Prossima Domanda ➔</button>
-    </div>
-
-    <div id="schermata-finale" class="container">
-        <h1>Partita Conclusa! 🎉</h1>
-        <div id="annuncio-vincitore" class="vincitore-annuncio">La Squadra X vince la partita!</div>
-        <p>Complimenti a tutti i partecipanti per l'ottimo ripasso di storia dell'arte.</p>
-        <button class="btn-azione" onclick="ricominciaGioco()">Gioca Ancora 🔄</button>
     </div>
 
     <script>
-        const codiciColori = {
-            "marrone": "#8d6e63",
-            "giallo": "#f1c40f",
-            "verde": "#2ecc71",
-            "blu": "#3498db",
-            "arancione": "#e67e22",
-            "rosso": "#e74c3c"
-        };
+        // CONFIGURAZIONE DEL GIOCO
+        const TEMPO_MASSIMO = 60;
+        const PUNTEGGIO_VITTORIA = 13;
 
+        // Database delle domande (Espandibile a piacimento)
         const databaseDomande = [
-          { argomento: "Preistoria", colore: "marrone", domanda: "Qual era la funzione principale delle pitture rupestri realizzate all'interno delle caverne?", opzioni: ["Decorare l'ambiente", "Scopi magico-propiziatori per la caccia", "Insegnare a scrivere", "Registrare i cambiamenti climatici"], rispostaCorretta: 1, spiegazione: "Gli uomini preistorici dipingevano gli animali sperando di 'catturarne' l'essenza per la caccia." },
-          { argomento: "Preistoria", colore: "marrone", domanda: "Quali pigmenti naturali venivano usati principalmente nella preistoria?", opzioni: ["Acrilici e tempere", "Terre, ocre e carbone", "Colori a olio", "Smalto sintetico"], rispostaCorretta: 1, spiegazione: "Utilizzavano minerali tritati (come l'ocra rossa e gialla) e carbone, mescolati con grasso animale o acqua." },
-          { argomento: "Mesopotamia", colore: "giallo", domanda: "Come si chiama la grande torre a gradoni tipica delle città sumere e babilonesi?", opzioni: ["Piramide", "Nuraghe", "Ziggurat", "Partenone"], rispostaCorretta: 2, spiegazione: "La Ziggurat era il centro religioso e magazzino della città; sulla sua sommità si trovava il tempio." },
-          { argomento: "Arte Egizia", colore: "verde", domanda: "Nella pittura egizia, come venivano rappresentate le figure umane secondo la 'legge della frontalità'?", opzioni: ["Totalmente di profilo", "Totalmente di fronte", "Volto/gambe di profilo, ma occhio/busto di fronte", "In prospettiva tridimensionale"], rispostaCorretta: 2, spiegazione: "Questa tecnica serviva a mostrare ogni parte del corpo dal suo angolo più riconoscibile." },
-          { argomento: "Cretese e Micenea", colore: "blu", domanda: "Nel famoso 'Gioco del Toro' affrescato a Cnosso, cosa indicano i diversi colori della pelle delle figure umane?", opzioni: ["L'età", "La provenienza geografica", "Il genere (uomini scuri, donne chiare)", "Il grado di nobiltà"], rispostaCorretta: 2, spiegazione: "È una convenzione artistica molto antica: la pelle bianca per le donne e rossastra/bruna per gli uomini." },
-          { argomento: "Arte Greca", colore: "arancione", domanda: "Quali sono i tre principali ordini architettonici dei templi greci?", opzioni: ["Romano, Gotico e Rinascimentale", "Dorico, Ionico e Corinzio", "Liscio, Scanalato e Decorato", "Archaico, Classico ed Ellenistico"], rispostaCorretta: 1, spiegazione: "Il Dorico è semplice e massiccio, lo Ionico ha le volute e il Corinzio le foglie d'acanto." },
-          { argomento: "Arte Romana", colore: "rosso", domanda: "Quale tecnica usavano i Romani per decorate le pareti in modo duraturo, dipingendo sull'intonaco fresco?", opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"], rispostaCorretta: 2, spiegazione: "Con l'affresco, asciugandosi, l'intonaco ingloba il pigmento facendolo diventare parte del muro stesso." }
+            {
+                domanda: "Chi ha dipinto la celebre 'Gioconda'?",
+                risposte: ["Michelangelo", "Leonardo da Vinci", "Raffaello", "Donatello"],
+                corretta: 1
+            },
+            {
+                domanda: "Quale movimento artistico esalta la velocità, la tecnologia e il futuro?",
+                risposte: ["Impressionismo", "Romanticismo", "Futurismo", "Neoclassicismo"],
+                corretta: 2
+            },
+            {
+                domanda: "Chi è l'autore del dipinto 'La notte stellata'?",
+                risposte: ["Vincent van Gogh", "Claude Monet", "Pablo Picasso", "Keith Haring"],
+                corretta: 0
+            },
+            {
+                domanda: "Quale stile architettonico e artistico è caratterizzato da archi a sesto acuto e grandi vetrate colorate?",
+                risposte: ["Romanico", "Gotico", "Rinascimentale", "Barocco"],
+                corretta: 1
+            }
         ];
 
-        let squadre = [];
-        let turnoAttuale = 0;
-        let domandaAttuale;
-        let timer;
-        let tempoRimasto = 60;
+        // STATO DEL GIOCO
+        let squadre = [
+            { nome: "Squadra Blu", punteggio: 0 },
+            { nome: "Squadra Rossa", punteggio: 0 }
+        ];
+        let indiceSquadraAttuale = 0;
+        let domandeDisponibili = [];
+        let domandaAttuale = null;
+        let tempoRimanente = TEMPO_MASSIMO;
+        let timerIntervallo = null;
 
-        const schermataIniziale = document.getElementById("schermata-iniziale");
-        const quizContainer = document.getElementById("quiz-container");
-        const schermataFinale = document.getElementById("schermata-finale");
-        const tabellone = document.getElementById("tabellone");
-        const indicatoreTurno = document.getElementById("indicatore-turno");
-        const titoloArgomento = document.getElementById("argomento-titolo");
-        const testoDomanda = document.getElementById("testo-domanda");
-        const contenitorePulsanti = document.getElementById("pulsanti-opzioni");
-        const areaFeedback = document.getElementById("feedback");
-        const btnAvanti = document.getElementById("btn-avanti");
-        const visualizzatoreCountdown = document.getElementById("countdown");
-        const annuncioVincitore = document.getElementById("annuncio-vincitore");
-
+        // INIZIALIZZAZIONE
         function iniziaGioco() {
-            const numeroSelezionato = parseInt(document.getElementById("numero-squadre").value);
+            squadre = [
+                { nome: "Squadra Blu", punteggio: 0 },
+                { nome: "Squadra Rossa", punteggio: 0 }
+            ];
+            indiceSquadraAttuale = 0;
+            domandeeDisponibili = [...databaseDomande];
             
-            squadre = [];
-            for (let i = 1; i <= numeroSelezionato; i++) {
-                squadre.push({ nome: "Squadra " + i, punteggio: 0 });
+            // Mescola le domande all'inizio della partita
+            domandeDisponibili.sort(() => Math.random() - 0.5);
+
+            aggiornaGraficaPunteggi();
+            mostraSchermata("game-screen");
+            caricaProssimaDomanda();
+        }
+
+        // FUNZIONI DI FLUSSO
+        function caricaProssimaDomanda() {
+            if (domandeDisponibili.length === 0) {
+                // Se le domande finiscono, ricarica il pool per non bloccare il gioco
+                domandeDisponibili = [...databaseDomande];
+                domandeDisponibili.sort(() => Math.random() - 0.5);
             }
-            
-            turnoAttuale = 0;
-            schermataIniziale.style.display = "none";
-            schermataFinale.style.display = "none";
-            quizContainer.style.display = "block";
-            
-            aggiornaInterfaccia();
-            pescaDomandaCasuale();
-        }
 
-        function aggiornaInterfaccia() {
-            tabellone.innerHTML = "";
-            squadre.forEach((squadra, index) => {
-                const badge = document.createElement("div");
-                badge.className = "squadra-score";
-                if (index === turnoAttuale) {
-                    badge.classList.add("squadra-attiva");
-                }
-                badge.innerText = `${squadra.nome}:${squadra.punteggio}/13`;
-                tabellone.appendChild(badge);
-            });
-
-            indicatoreTurno.innerText = "Tocca alla " + squadre[turnoAttuale].nome;
-        }
-
-        function avviaTimer() {
-            tempoRimasto = 60;
-            visualizzatoreCountdown.innerText = tempoRimasto;
-            clearInterval(timer); // Pulisce eventuali timer residui
+            domandaAttuale = domandeDisponibili.pop();
             
-            timer = setInterval(() => {
-                tempoRimasto--;
-                visualizzatoreCountdown.innerText = tempoRimasto;
-                
-                if (tempoRimasto <= 0) {
-                    clearInterval(timer);
-                    gestisciTempoScaduto();
-                }
-            }, 1000);
-        }
+            // Rendering della domanda
+            document.getElementById("question").innerText = domandaAttuale.domanda;
+            
+            // Rendering dei bottoni risposta
+            const containerRisposte = document.getElementById("answers");
+            containerRisposte.innerHTML = "";
 
-        function pescaDomandaCasuale() {
-            const indiceCasuale = Math.floor(Math.random() * databaseDomande.length);
-            domandaAttuale = databaseDomande[indiceCasuale];
-            
-            titoloArgomento.innerText = "Categoria: " + domandaAttuale.argomento;
-            titoloArgomento.style.backgroundColor = codiciColori[domandaAttuale.colore];
-            
-            testoDomanda.innerText = calendar_event_id = domandaAttuale.domanda;
-            
-            contenitorePulsanti.innerHTML = "";
-            areaFeedback.style.display = "none";
-            btnAvanti.style.display = "none"; 
-
-            domandaAttuale.opzioni.forEach((opzione, index) => {
+            domandaAttuale.risposte.forEach((risposta, indice) => {
                 const bottone = document.createElement("button");
-                bottone.innerText = opzione;
-                bottone.classList.add("btn-opzione");
-                bottone.onclick = () => verificaRisposta(index, domandaAttuale.rispostaCorretta, domandaAttuale.spiegazione);
-                contenitorePulsanti.appendChild(bottone);
+                bottone.className = "btn-answer";
+                bottone.innerText = risposta;
+                bottone.onclick = () => controllaRisposta(indice);
+                containerRisposte.appendChild(bottone);
             });
+
+            // Evidenzia visivamente la squadra attiva
+            document.getElementById("team-0-card").className = `team-card ${indiceSquadraAttuale === 0 ? 'active' : ''}`;
+            document.getElementById("team-1-card").className = `team-card ${indiceSquadraAttuale === 1 ? 'active' : ''}`;
 
             avviaTimer();
         }
 
-        function verificaRisposta(indiceScelto, indiceCorretto, spiegazione) {
-            clearInterval(timer); // Ferma il tempo appena rispondono
-            areaFeedback.style.display = "block";
-            btnAvanti.style.display = "inline-block"; 
+        // GESTIONE TIMER
+        function avviaTimer() {
+            tempoRimanente = TEMPO_MASSIMO;
+            document.getElementById("timer").innerText = tempoRimanente;
             
-            const tuttiIPulsanti = document.querySelectorAll(".btn-opzione");
-            tuttiIPulsanti.forEach(btn => btn.disabled = true);
+            clearInterval(timerIntervallo);
+            
+            timerIntervallo = setInterval(() => {
+                tempoRimanente--;
+                document.getElementById("timer").innerText = tempoRimanente;
 
-            if (indiceScelto === indiceCorretto) {
-                areaFeedback.innerText = "Esatto! 🎉\n\n" + spiegazione;
-                areaFeedback.className = "corretto";
+                if (tempoRimanente <= 0) {
+                    clearInterval(timerIntervallo);
+                    disabilitaBottoni();
+                    alert(`Tempo scaduto per la ${squadre[indiceSquadraAttuale].nome}! Il turno passa alla squadra successiva.`);
+                    passaTurno();
+                }
+            }, 1000);
+        }
+
+        // VERIFICA DELLA RISPOSTA
+        function controllaRisposta(indiceScelto) {
+            clearInterval(timerIntervallo);
+            disabilitaBottoni();
+
+            const bottoni = document.querySelectorAll(".btn-answer");
+
+            if (indiceScelto === AppiattisciIndiceCorretto(domandaAttuale.corretta)) {
+                // Risposta Corretta
+                bottoni[indiceScelto].style.backgroundColor = "#2ecc71";
+                bottoni[indiceScelto].style.color = "white";
+                bottoni[indiceScelto].style.borderColor = "#2ecc71";
                 
-                squadre[turnoAttuale].punteggio++;
-                aggiornaInterfaccia(); 
-                
-                // CONTROLLO VITTORIA (13 punti)
-                if (squadre[turnoAttuale].punteggio >= 13) {
-                    setTimeout(() => {
-                        concludiPartita(squadre[turnoAttuale].nome);
-                    }, 1500); // Piccolo ritardo per far vedere il punto prima della schermata finale
+                squadre[indiceSquadraAttuale].punteggio += 1; // Assegna 1 punto
+                aggiornaGraficaPunteggi();
+
+                // Controllo immediato della vittoria a 13 punti
+                if (squadre[indiceSquadraAttuale].punteggio >= PUNTEGGIO_VITTORIA) {
+                    setTimeout(() => dichiaraVincitore(squadre[indiceSquadraAttuale]), 1000);
                     return;
                 }
             } else {
-                areaFeedback.innerText = "Sbagliato! 😔\n\n" + spiegazione;
-                areaFeedback.className = "errato";
+                // Risposta Errata
+                bottoni[indiceScelto].style.backgroundColor = "#e74c3c";
+                bottoni[indiceScelto].style.color = "white";
+                bottoni[indiceScelto].style.borderColor = "#e74c3c";
+                
+                // Mostra visivamente quella corretta
+                bottoni[domandaAttuale.corretta].style.backgroundColor = "#2ecc71";
+                bottoni[domandaAttuale.corretta].style.color = "white";
             }
+
+            // Attendi un secondo per mostrare il feedback visivo prima di cambiare turno
+            setTimeout(passaTurno, 1200);
         }
 
-        function gestisciTempoScaduto() {
-            areaFeedback.style.display = "block";
-            btnAvanti.style.display = "inline-block";
-            areaFeedback.innerText = "Tempo Scaduto! ⏱️\n\nNon è stato assegnato alcun punto. Passiamo alla spiegazione:\n" + domandaAttuale.spiegazione;
-            areaFeedback.className = "errato";
-
-            const tuttiIPulsanti = document.querySelectorAll(".btn-opzione");
-            tuttiIPulsanti.forEach(btn => btn.disabled = true);
+        function AppiattisciIndiceCorretto(valore) {
+            return valore; // Funzione di utilità interna
         }
 
-        function prossimoTurno() {
-            turnoAttuale = (turnoAttuale + 1) % squadre.length;
-            aggiornaInterfaccia();
-            pescaDomandaCasuale();
+        function passaTurno() {
+            // Cambia squadra (0 diventa 1, 1 diventa 0)
+            indiceSquadraAttuale = (indiceSquadraAttuale + 1) % squadre.length;
+            caricaProssimaDomanda();
         }
 
-        function concludiPartita(nomeVincitore) {
-            clearInterval(timer);
-            quizContainer.style.display = "none";
-            schermataFinale.style.display = "block";
-            annuncioVincitore.innerText = `🏆 La
+        // INTERFACCIA E UTILITY
+        function disabilitaBottoni() {
+            const bottoni = document.querySelectorAll(".btn-answer");
+            bottoni.forEach(b => b.disabled = true);
+        }
+
+        function aggiornaGraficaPunteggi() {
+            document.getElementById("team-0-score").innerText = squadre[0].punteggio;
+            document.getElementById("team-1-score").innerText = squadre[1].punteggio;
+        }
+
+        function mostraSchermata(idSchermata) {
+            document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+            document.getElementById(idSchermata).classList.add("active");
+        }
+
+        function dichiaraVincitore(squadra) {
+            document.getElementById("win-message").innerHTML = `La <strong>${squadra.nome}</strong> ha raggiunto il traguardo dei ${PUNTEGGIO_VITTORIA} punti dominando la partita!`;
+            mostraSchermata("win-screen");
+        }
+
+        function riavviaGioco() {
+            iniziaGioco();
+        }
+
+        // Avvio automatico al caricamento della pagina
+        window.onload = iniziaGioco;
+    </script>
+</body>
+</html>
