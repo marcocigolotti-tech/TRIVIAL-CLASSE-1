@@ -25,6 +25,8 @@
             max-width: 600px;
             width: 100%;
             text-align: center;
+            position: relative;
+            overflow: hidden; 
         }
         
         /* SCHERMATA INIZIALE */
@@ -38,9 +40,42 @@
         #schermata-iniziale h2 {
             color: #7f8c8d;
             font-size: 1.2em;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-weight: normal;
         }
+        
+        /* LEGENDA ARGOMENTI INIZIALE */
+        .titolo-legenda {
+            font-size: 1em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .legenda-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .badge-categoria {
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* Colori dei badge per la legenda */
+        .bg-marrone { background-color: #8d6e63; }
+        .bg-giallo { background-color: #f1c40f; }
+        .bg-verde { background-color: #2ecc71; }
+        .bg-blu { background-color: #3498db; }
+        .bg-arancione { background-color: #e67e22; }
+        .bg-rosso { background-color: #e74c3c; }
+
         .selettore-squadre {
             margin: 20px 0;
             font-size: 1.1em;
@@ -61,7 +96,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: background 0.3s;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         .btn-inizia:hover { background-color: #c0392b; }
 
@@ -83,26 +118,33 @@
             color: #2c3e50;
         }
         .squadra-attiva {
-            background-color: #f1c40f; /* Colore giallo per evidenziare il turno */
+            background-color: #f1c40f; 
             color: #000;
             box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
         }
 
         /* GIOCO */
-        #quiz-container { display: none; }
+        #quiz-container { display: none; padding-top: 0; }
+        
         #indicatore-turno {
-            font-size: 1.3em;
-            color: #e67e22;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        #argomento-titolo {
-            color: #2c3e50;
             font-size: 1.1em;
-            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+        }
+        
+        #argomento-titolo {
+            font-size: 1.2em;
+            margin: 0 -30px 20px -30px; 
+            padding: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3); 
+            transition: background-color 0.3s;
         }
+        
         #testo-domanda {
             font-size: 1.2em;
             margin-bottom: 20px;
@@ -115,19 +157,24 @@
             width: 100%;
             padding: 15px;
             margin: 10px 0;
-            background-color: #3498db;
-            color: white;
-            border: none;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: 2px solid #bdc3c7;
             border-radius: 8px;
             font-size: 1em;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.2s;
         }
-        .btn-opzione:hover { background-color: #2980b9; }
+        .btn-opzione:hover { 
+            background-color: #e0e6ed; 
+            border-color: #95a5a6;
+        }
         .btn-opzione:disabled {
-            background-color: #bdc3c7;
+            background-color: #ecf0f1;
+            border-color: #ecf0f1;
             cursor: not-allowed;
-            color: #7f8c8d;
+            color: #95a5a6;
         }
         #feedback {
             margin-top: 20px;
@@ -135,7 +182,7 @@
             padding: 15px;
             border-radius: 8px;
             display: none;
-            white-space: pre-line; /* Permette di andare a capo correttamente */
+            white-space: pre-line; 
         }
         .corretto { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .errato { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
@@ -143,7 +190,7 @@
         #btn-avanti {
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: #2ecc71;
+            background-color: #2c3e50;
             color: white;
             border: none;
             border-radius: 8px;
@@ -152,7 +199,7 @@
             display: none;
             font-weight: bold;
         }
-        #btn-avanti:hover { background-color: #27ae60; }
+        #btn-avanti:hover { background-color: #1a252f; }
     </style>
 </head>
 <body>
@@ -160,6 +207,16 @@
     <div id="schermata-iniziale" class="container">
         <h1>Prof. Marco Cigolotti</h1>
         <h2>TriviArt - Classe 1</h2>
+        
+        <div class="titolo-legenda">Il percorso nel tempo:</div>
+        <div class="legenda-container">
+            <div class="badge-categoria bg-marrone">1. Preistoria</div>
+            <div class="badge-categoria bg-giallo">2. Mesopotamia</div>
+            <div class="badge-categoria bg-verde">3. Arte Egizia</div>
+            <div class="badge-categoria bg-blu">4. Creta e Micene</div>
+            <div class="badge-categoria bg-arancione">5. Arte Greca</div>
+            <div class="badge-categoria bg-rosso">6. Arte Romana</div>
+        </div>
         
         <div class="selettore-squadre">
             <label for="numero-squadre">Numero di squadre:</label>
@@ -177,11 +234,11 @@
 
     <div id="quiz-container" class="container">
         
-        <div id="tabellone"></div>
+        <h2 id="argomento-titolo">Argomento</h2>
         
+        <div id="tabellone"></div>
         <div id="indicatore-turno">Tocca alla Squadra X</div>
 
-        <h2 id="argomento-titolo">Argomento</h2>
         <h3 id="testo-domanda">Caricamento domanda...</h3>
         
         <div id="pulsanti-opzioni"></div>
@@ -191,7 +248,15 @@
     </div>
 
     <script>
-        // IL DATABASE (Esempi ridotti, pronti per essere espansi)
+        const codiciColori = {
+            "marrone": "#8d6e63",
+            "giallo": "#f1c40f",
+            "verde": "#2ecc71",
+            "blu": "#3498db",
+            "arancione": "#e67e22",
+            "rosso": "#e74c3c"
+        };
+
         const databaseDomande = [
           { argomento: "Preistoria", colore: "marrone", domanda: "Qual era la funzione principale delle pitture rupestri realizzate all'interno delle caverne?", opzioni: ["Decorare l'ambiente", "Scopi magico-propiziatori per la caccia", "Insegnare a scrivere", "Registrare i cambiamenti climatici"], rispostaCorretta: 1, spiegazione: "Gli uomini preistorici dipingevano gli animali sperando di 'catturarne' l'essenza per la caccia." },
           { argomento: "Preistoria", colore: "marrone", domanda: "Quali pigmenti naturali venivano usati principalmente nella preistoria?", opzioni: ["Acrilici e tempere", "Terre, ocre e carbone", "Colori a olio", "Smalto sintetico"], rispostaCorretta: 1, spiegazione: "Utilizzavano minerali tritati (come l'ocra rossa e gialla) e carbone, mescolati con grasso animale o acqua." },
@@ -202,12 +267,10 @@
           { argomento: "Arte Romana", colore: "rosso", domanda: "Quale tecnica usavano i Romani per decorare le pareti in modo duraturo, dipingendo sull'intonaco fresco?", opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"], rispostaCorretta: 2, spiegazione: "Con l'affresco, asciugandosi, l'intonaco ingloba il pigmento facendolo diventare parte del muro stesso." }
         ];
 
-        // VARIABILI DI GIOCO
         let squadre = [];
         let turnoAttuale = 0;
         let domandaAttuale;
 
-        // ELEMENTI DEL DOM
         const schermataIniziale = document.getElementById("schermata-iniziale");
         const quizContainer = document.getElementById("quiz-container");
         const tabellone = document.getElementById("tabellone");
@@ -218,11 +281,9 @@
         const areaFeedback = document.getElementById("feedback");
         const btnAvanti = document.getElementById("btn-avanti");
 
-        // 1. INIZIALIZZAZIONE DELLE SQUADRE
         function iniziaGioco() {
             const numeroSelezionato = parseInt(document.getElementById("numero-squadre").value);
             
-            // Creiamo l'array delle squadre con punteggio a zero
             squadre = [];
             for (let i = 1; i <= numeroSelezionato; i++) {
                 squadre.push({ nome: "Squadra " + i, punteggio: 0 });
@@ -236,30 +297,28 @@
             pescaDomandaCasuale();
         }
 
-        // 2. AGGIORNAMENTO DEL TABELLONE E DEL TURNO
         function aggiornaInterfaccia() {
-            // Svuota e ricrea i punteggi in alto
             tabellone.innerHTML = "";
             squadre.forEach((squadra, index) => {
                 const badge = document.createElement("div");
                 badge.className = "squadra-score";
                 if (index === turnoAttuale) {
-                    badge.classList.add("squadra-attiva"); // Evidenzia chi deve giocare
+                    badge.classList.add("squadra-attiva");
                 }
                 badge.innerText = `${squadra.nome}: ${squadra.punteggio}`;
                 tabellone.appendChild(badge);
             });
 
-            // Scritta grande per indicare il turno
             indicatoreTurno.innerText = "Tocca alla " + squadre[turnoAttuale].nome;
         }
 
-        // 3. ESTRAZIONE DELLA DOMANDA
         function pescaDomandaCasuale() {
             const indiceCasuale = Math.floor(Math.random() * databaseDomande.length);
             domandaAttuale = databaseDomande[indiceCasuale];
             
             titoloArgomento.innerText = "Categoria: " + domandaAttuale.argomento;
+            titoloArgomento.style.backgroundColor = codiciColori[domandaAttuale.colore];
+            
             testoDomanda.innerText = domandaAttuale.domanda;
             
             contenitorePulsanti.innerHTML = "";
@@ -275,12 +334,10 @@
             });
         }
 
-        // 4. VERIFICA E ASSEGNAZIONE PUNTI
         function verificaRisposta(indiceScelto, indiceCorretto, spiegazione) {
             areaFeedback.style.display = "block";
             btnAvanti.style.display = "inline-block"; 
             
-            // Blocca i pulsanti
             const tuttiIPulsanti = document.querySelectorAll(".btn-opzione");
             tuttiIPulsanti.forEach(btn => btn.disabled = true);
 
@@ -288,20 +345,16 @@
                 areaFeedback.innerText = "Esatto! 🎉\n\n" + spiegazione;
                 areaFeedback.className = "corretto";
                 
-                // Aggiunge un punto alla squadra di turno
                 squadre[turnoAttuale].punteggio++;
-                aggiornaInterfaccia(); // Aggiorna subito il numero a schermo
+                aggiornaInterfaccia(); 
             } else {
                 areaFeedback.innerText = "Sbagliato! 😔\n\n" + spiegazione;
                 areaFeedback.className = "errato";
             }
         }
 
-        // 5. PASSAGGIO AL TURNO SUCCESSIVO
         function prossimoTurno() {
-            // Aumenta il turno. Se supera il numero di squadre, riparte da zero.
             turnoAttuale = (turnoAttuale + 1) % squadre.length;
-            
             aggiornaInterfaccia();
             pescaDomandaCasuale();
         }
