@@ -29,8 +29,8 @@
             overflow: hidden; 
         }
         
-        /* SCHERMATA INIZIALE */
-        #schermata-iniziale h1 {
+        /* SCHERMATA INIZIALE E FINALE */
+        #schermata-iniziale h1, #schermata-finale h1 {
             color: #2c3e50;
             font-size: 1.8em;
             margin-bottom: 5px;
@@ -68,7 +68,6 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        /* Colori dei badge per la legenda */
         .bg-marrone { background-color: #8d6e63; }
         .bg-giallo { background-color: #f1c40f; }
         .bg-verde { background-color: #2ecc71; }
@@ -86,7 +85,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
-        .btn-inizia {
+        .btn-azione {
             background-color: #e74c3c;
             color: white;
             padding: 15px 30px;
@@ -98,7 +97,7 @@
             transition: background 0.3s;
             margin-top: 10px;
         }
-        .btn-inizia:hover { background-color: #c0392b; }
+        .btn-azione:hover { background-color: #c0392b; }
 
         /* TABELLONE PUNTEGGI */
         #tabellone {
@@ -123,8 +122,20 @@
             box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
         }
 
+        /* TIMER */
+        #timer-container {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #c0392b;
+            margin-bottom: 15px;
+            background-color: #fadbd8;
+            padding: 5px 15px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
         /* GIOCO */
-        #quiz-container { display: none; padding-top: 0; }
+        #quiz-container, #schermata-finale { display: none; padding-top: 0; }
         
         #indicatore-turno {
             font-size: 1.1em;
@@ -200,6 +211,14 @@
             font-weight: bold;
         }
         #btn-avanti:hover { background-color: #1a252f; }
+
+        /* SCHERMATA FINALE VITTORIA */
+        .vincitore-annuncio {
+            font-size: 1.5em;
+            color: #27ae60;
+            font-weight: bold;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -229,14 +248,16 @@
             </select>
         </div>
         
-        <button class="btn-inizia" onclick="iniziaGioco()">Inizia la Partita</button>
+        <button class="btn-azione" onclick="iniziaGioco()">Inizia la Partita</button>
     </div>
 
     <div id="quiz-container" class="container">
-        
         <h2 id="argomento-titolo">Argomento</h2>
         
         <div id="tabellone"></div>
+        
+        <div id="timer-container">Tempo rimasto: <span id="countdown">60</span>s</div>
+        
         <div id="indicatore-turno">Tocca alla Squadra X</div>
 
         <h3 id="testo-domanda">Caricamento domanda...</h3>
@@ -245,6 +266,13 @@
         <div id="feedback"></div>
         
         <button id="btn-avanti" onclick="prossimoTurno()">Prossima Domanda ➔</button>
+    </div>
+
+    <div id="schermata-finale" class="container">
+        <h1>Partita Conclusa! 🎉</h1>
+        <div id="annuncio-vincitore" class="vincitore-annuncio">La Squadra X vince la partita!</div>
+        <p>Complimenti a tutti i partecipanti per l'ottimo ripasso di storia dell'arte.</p>
+        <button class="btn-azione" onclick="ricominciaGioco()">Gioca Ancora 🔄</button>
     </div>
 
     <script>
@@ -264,15 +292,18 @@
           { argomento: "Arte Egizia", colore: "verde", domanda: "Nella pittura egizia, come venivano rappresentate le figure umane secondo la 'legge della frontalità'?", opzioni: ["Totalmente di profilo", "Totalmente di fronte", "Volto/gambe di profilo, ma occhio/busto di fronte", "In prospettiva tridimensionale"], rispostaCorretta: 2, spiegazione: "Questa tecnica serviva a mostrare ogni parte del corpo dal suo angolo più riconoscibile." },
           { argomento: "Cretese e Micenea", colore: "blu", domanda: "Nel famoso 'Gioco del Toro' affrescato a Cnosso, cosa indicano i diversi colori della pelle delle figure umane?", opzioni: ["L'età", "La provenienza geografica", "Il genere (uomini scuri, donne chiare)", "Il grado di nobiltà"], rispostaCorretta: 2, spiegazione: "È una convenzione artistica molto antica: la pelle bianca per le donne e rossastra/bruna per gli uomini." },
           { argomento: "Arte Greca", colore: "arancione", domanda: "Quali sono i tre principali ordini architettonici dei templi greci?", opzioni: ["Romano, Gotico e Rinascimentale", "Dorico, Ionico e Corinzio", "Liscio, Scanalato e Decorato", "Archaico, Classico ed Ellenistico"], rispostaCorretta: 1, spiegazione: "Il Dorico è semplice e massiccio, lo Ionico ha le volute e il Corinzio le foglie d'acanto." },
-          { argomento: "Arte Romana", colore: "rosso", domanda: "Quale tecnica usavano i Romani per decorare le pareti in modo duraturo, dipingendo sull'intonaco fresco?", opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"], rispostaCorretta: 2, spiegazione: "Con l'affresco, asciugandosi, l'intonaco ingloba il pigmento facendolo diventare parte del muro stesso." }
+          { argomento: "Arte Romana", colore: "rosso", domanda: "Quale tecnica usavano i Romani per decorate le pareti in modo duraturo, dipingendo sull'intonaco fresco?", opzioni: ["Pittura a olio", "Mosaico", "Affresco", "Tempera all'uovo"], rispostaCorretta: 2, spiegazione: "Con l'affresco, asciugandosi, l'intonaco ingloba il pigmento facendolo diventare parte del muro stesso." }
         ];
 
         let squadre = [];
         let turnoAttuale = 0;
         let domandaAttuale;
+        let timer;
+        let tempoRimasto = 60;
 
         const schermataIniziale = document.getElementById("schermata-iniziale");
         const quizContainer = document.getElementById("quiz-container");
+        const schermataFinale = document.getElementById("schermata-finale");
         const tabellone = document.getElementById("tabellone");
         const indicatoreTurno = document.getElementById("indicatore-turno");
         const titoloArgomento = document.getElementById("argomento-titolo");
@@ -280,6 +311,8 @@
         const contenitorePulsanti = document.getElementById("pulsanti-opzioni");
         const areaFeedback = document.getElementById("feedback");
         const btnAvanti = document.getElementById("btn-avanti");
+        const visualizzatoreCountdown = document.getElementById("countdown");
+        const annuncioVincitore = document.getElementById("annuncio-vincitore");
 
         function iniziaGioco() {
             const numeroSelezionato = parseInt(document.getElementById("numero-squadre").value);
@@ -291,6 +324,7 @@
             
             turnoAttuale = 0;
             schermataIniziale.style.display = "none";
+            schermataFinale.style.display = "none";
             quizContainer.style.display = "block";
             
             aggiornaInterfaccia();
@@ -305,11 +339,27 @@
                 if (index === turnoAttuale) {
                     badge.classList.add("squadra-attiva");
                 }
-                badge.innerText = `${squadra.nome}: ${squadra.punteggio}`;
+                badge.innerText = `${squadra.nome}:${squadra.punteggio}/13`;
                 tabellone.appendChild(badge);
             });
 
             indicatoreTurno.innerText = "Tocca alla " + squadre[turnoAttuale].nome;
+        }
+
+        function avviaTimer() {
+            tempoRimasto = 60;
+            visualizzatoreCountdown.innerText = tempoRimasto;
+            clearInterval(timer); // Pulisce eventuali timer residui
+            
+            timer = setInterval(() => {
+                tempoRimasto--;
+                visualizzatoreCountdown.innerText = tempoRimasto;
+                
+                if (tempoRimasto <= 0) {
+                    clearInterval(timer);
+                    gestisciTempoScaduto();
+                }
+            }, 1000);
         }
 
         function pescaDomandaCasuale() {
@@ -319,7 +369,7 @@
             titoloArgomento.innerText = "Categoria: " + domandaAttuale.argomento;
             titoloArgomento.style.backgroundColor = codiciColori[domandaAttuale.colore];
             
-            testoDomanda.innerText = domandaAttuale.domanda;
+            testoDomanda.innerText = calendar_event_id = domandaAttuale.domanda;
             
             contenitorePulsanti.innerHTML = "";
             areaFeedback.style.display = "none";
@@ -332,9 +382,12 @@
                 bottone.onclick = () => verificaRisposta(index, domandaAttuale.rispostaCorretta, domandaAttuale.spiegazione);
                 contenitorePulsanti.appendChild(bottone);
             });
+
+            avviaTimer();
         }
 
         function verificaRisposta(indiceScelto, indiceCorretto, spiegazione) {
+            clearInterval(timer); // Ferma il tempo appena rispondono
             areaFeedback.style.display = "block";
             btnAvanti.style.display = "inline-block"; 
             
@@ -347,10 +400,28 @@
                 
                 squadre[turnoAttuale].punteggio++;
                 aggiornaInterfaccia(); 
+                
+                // CONTROLLO VITTORIA (13 punti)
+                if (squadre[turnoAttuale].punteggio >= 13) {
+                    setTimeout(() => {
+                        concludiPartita(squadre[turnoAttuale].nome);
+                    }, 1500); // Piccolo ritardo per far vedere il punto prima della schermata finale
+                    return;
+                }
             } else {
                 areaFeedback.innerText = "Sbagliato! 😔\n\n" + spiegazione;
                 areaFeedback.className = "errato";
             }
+        }
+
+        function gestisciTempoScaduto() {
+            areaFeedback.style.display = "block";
+            btnAvanti.style.display = "inline-block";
+            areaFeedback.innerText = "Tempo Scaduto! ⏱️\n\nNon è stato assegnato alcun punto. Passiamo alla spiegazione:\n" + domandaAttuale.spiegazione;
+            areaFeedback.className = "errato";
+
+            const tuttiIPulsanti = document.querySelectorAll(".btn-opzione");
+            tuttiIPulsanti.forEach(btn => btn.disabled = true);
         }
 
         function prossimoTurno() {
@@ -358,6 +429,9 @@
             aggiornaInterfaccia();
             pescaDomandaCasuale();
         }
-    </script>
-</body>
-</html>
+
+        function concludiPartita(nomeVincitore) {
+            clearInterval(timer);
+            quizContainer.style.display = "none";
+            schermataFinale.style.display = "block";
+            annuncioVincitore.innerText = `🏆 La
